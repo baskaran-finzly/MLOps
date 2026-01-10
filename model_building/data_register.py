@@ -26,7 +26,7 @@ except RepositoryNotFoundError:
 # Step 2: Upload the data folder to Hugging Face Hub
 print("Uploading dataset to Hugging Face Hub...")
 api.upload_folder(
-    folder_path="wellness_tourism_mlops/data",
+    folder_path="data",
     repo_id=repo_id,
     repo_type=repo_type,
 )
