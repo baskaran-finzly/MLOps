@@ -16,8 +16,8 @@ from sklearn.preprocessing import LabelEncoder
 # For Hugging Face Hub authentication to upload files
 from huggingface_hub import HfApi
 
-# TODO: Replace with your Hugging Face username
-HF_USERNAME = "YOUR_USERNAME"  # Change this!
+
+HF_USERNAME = "BaskaranAIExpert"
 
 # Initialize API client
 api = HfApi(token=os.getenv("HF_TOKEN"))
@@ -31,7 +31,6 @@ print(f"Dataset loaded successfully. Shape: {df.shape}")
 print(f"Columns: {list(df.columns)}")
 
 # Data Cleaning: Drop unnecessary columns
-# CustomerID is a unique identifier and should be dropped
 print("\nDropping unnecessary columns...")
 if 'CustomerID' in df.columns:
     df.drop(columns=['CustomerID'], inplace=True)
@@ -46,7 +45,8 @@ if missing_values.sum() > 0:
     print("Missing values found:")
     print(missing_values[missing_values > 0])
     # Fill missing values or drop rows based on your strategy
-    # Example: df = df.dropna()  # Uncomment if you want to drop rows with missing values
+    df = df.dropna()  # Drop rows with missing values
+    print("Dropped rows with missing values.")
 else:
     print("No missing values found.")
 
@@ -87,7 +87,8 @@ y = df[target_col]
 # Display class distribution
 print(f"\nTarget variable distribution:")
 print(y.value_counts())
-print(f"Class ratio: {y.value_counts()[0] / y.value_counts()[1]:.2f}:1")
+if len(y.value_counts()) == 2:
+    print(f"Class ratio: {y.value_counts()[0] / y.value_counts()[1]:.2f}:1")
 
 # Perform train-test split (80-20 split)
 print("\nPerforming train-test split (80% train, 20% test)...")

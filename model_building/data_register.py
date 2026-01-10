@@ -8,8 +8,7 @@ from huggingface_hub import HfApi, create_repo
 import os
 
 
-# TODO: Replace with your Hugging Face username
-repo_id = "YOUR_USERNAME/wellness-tourism-dataset"  # Change this!
+repo_id = "BaskaranAIExpert/wellness-tourism-dataset"
 repo_type = "dataset"
 
 # Initialize API client
@@ -27,10 +26,11 @@ except RepositoryNotFoundError:
 # Step 2: Upload the data folder to Hugging Face Hub
 print("Uploading dataset to Hugging Face Hub...")
 api.upload_folder(
-    folder_path="data",  # Path to the folder containing your dataset
+    folder_path="wellness_tourism_mlops/data",
     repo_id=repo_id,
     repo_type=repo_type,
 )
 
 print("Data registration completed successfully!")
+
 

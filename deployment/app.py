@@ -10,7 +10,7 @@ from huggingface_hub import hf_hub_download
 import joblib
 
 # TODO: Replace with your Hugging Face username
-HF_USERNAME = "YOUR_USERNAME"  # Change this!
+HF_USERNAME = "BaskaranAIExpert"  # Change this!
 
 # Page configuration
 st.set_page_config(
@@ -54,7 +54,6 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("📋 Customer Details")
     
-    # Customer basic information
     age = st.number_input("Age", min_value=18, max_value=100, value=35, step=1)
     gender = st.selectbox("Gender", ["Male", "Female"])
     marital_status = st.selectbox("Marital Status", ["Single", "Married", "Divorced"])
@@ -72,7 +71,6 @@ with col1:
         step=1000
     )
     
-    # Travel-related information
     city_tier = st.selectbox("City Tier", ["Tier 1", "Tier 2", "Tier 3"])
     number_of_trips = st.number_input(
         "Number of Trips (Annual Average)", 
@@ -162,9 +160,8 @@ def encode_categorical(value, category_type):
     }
     return encodings.get(category_type, {}).get(value, 0)
 
-# Assemble input into DataFrame (matching the exact column order and names from training)
+# Assemble input into DataFrame
 if st.button("🔮 Predict Purchase Likelihood", type="primary"):
-    # Create input DataFrame with exact column names and order
     input_data = pd.DataFrame([{
         'Age': age,
         'TypeofContact': encode_categorical(type_of_contact, 'TypeofContact'),
@@ -186,12 +183,10 @@ if st.button("🔮 Predict Purchase Likelihood", type="primary"):
         'DurationOfPitch': duration_of_pitch
     }])
     
-    # Make prediction
     try:
         prediction = model.predict(input_data)[0]
         prediction_proba = model.predict_proba(input_data)[0]
         
-        # Display results
         st.markdown("---")
         st.subheader("📊 Prediction Result")
         
@@ -202,7 +197,6 @@ if st.button("🔮 Predict Purchase Likelihood", type="primary"):
             st.warning(f"❌ **The customer is NOT LIKELY to purchase the Wellness Tourism Package.**")
             st.info(f"Confidence: {prediction_proba[0]*100:.2f}%")
         
-        # Show probability breakdown
         col_prob1, col_prob2 = st.columns(2)
         with col_prob1:
             st.metric("Probability of Purchase", f"{prediction_proba[1]*100:.2f}%")
@@ -211,9 +205,7 @@ if st.button("🔮 Predict Purchase Likelihood", type="primary"):
             
     except Exception as e:
         st.error(f"Error making prediction: {str(e)}")
-        st.info("Please check that all input fields are filled correctly.")
 
-# Footer
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: gray;'>

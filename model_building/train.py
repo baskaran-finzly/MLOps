@@ -22,7 +22,7 @@ from huggingface_hub import HfApi, create_repo
 from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 
 # TODO: Replace with your Hugging Face username
-HF_USERNAME = "YOUR_USERNAME"  # Change this!
+HF_USERNAME = "BaskaranAIExpert"  # Change this!
 
 # Initialize API client
 api = HfApi(token=os.getenv("HF_TOKEN"))
@@ -43,7 +43,6 @@ print(f"Training set shape: {Xtrain.shape}")
 print(f"Test set shape: {Xtest.shape}")
 
 # Define feature types
-# Numeric features
 numeric_features = [
     'Age',
     'NumberOfPersonVisiting',
@@ -54,11 +53,10 @@ numeric_features = [
     'NumberOfFollowups',
     'DurationOfPitch',
     'NumberOfChildrenVisiting',
-    'Passport',  # Binary but numeric
-    'OwnCar'     # Binary but numeric
+    'Passport',
+    'OwnCar'
 ]
 
-# Categorical features (already label encoded in prep.py, but we'll use OneHotEncoder for better performance)
 categorical_features = [
     'TypeofContact',
     'CityTier',
@@ -207,4 +205,3 @@ print(f"Model '{model_filename}' uploaded successfully!")
 print("\n" + "="*50)
 print("MODEL TRAINING COMPLETED SUCCESSFULLY!")
 print("="*50)
-
