@@ -36,8 +36,16 @@ ytest_path = f"hf://datasets/{HF_USERNAME}/wellness-tourism-dataset/ytest.csv"
 
 Xtrain = pd.read_csv(Xtrain_path)
 Xtest = pd.read_csv(Xtest_path)
-ytrain = pd.read_csv(ytrain_path)
-ytest = pd.read_csv(ytest_path)
+ytrain = pd.read_csv(ytrain_path).squeeze()  # Convert DataFrame to Series
+ytest = pd.read_csv(ytest_path).squeeze()  # Convert DataFrame to Series
+
+# Drop 'Unnamed: 0' column if it exists (from CSV index)
+if 'Unnamed: 0' in Xtrain.columns:
+    Xtrain = Xtrain.drop(columns=['Unnamed: 0'])
+    print("Dropped 'Unnamed: 0' column from Xtrain")
+if 'Unnamed: 0' in Xtest.columns:
+    Xtest = Xtest.drop(columns=['Unnamed: 0'])
+    print("Dropped 'Unnamed: 0' column from Xtest")
 
 print(f"Training set shape: {Xtrain.shape}")
 print(f"Test set shape: {Xtest.shape}")

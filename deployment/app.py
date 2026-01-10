@@ -184,6 +184,29 @@ if st.button("🔮 Predict Purchase Likelihood", type="primary"):
     }])
     
     try:
+        # Get expected columns from the preprocessing step in the pipeline
+        # The model is a Pipeline with a ColumnTransformer as the first step
+        expected_cols = None
+        if hasattr(model, 'steps') and len(model.steps) > 0:
+            preprocessor = model.steps[0][1]  # Get the ColumnTransformer
+            if hasattr(preprocessor, 'feature_names_in_'):
+                expected_cols = list(preprocessor.feature_names_in_)
+        
+        # If model expects 'Unnamed: 0', add it (workaround for current model)
+        # This will be fixed when the model is retrained without this column
+        if expected_cols and 'Unnamed: 0' in expected_cols:
+            if 'Unnamed: 0' not in input_data.columns:
+                input_data['Unnamed: 0'] = 0
+        
+        # Reorder columns to match expected order if available
+        if expected_cols:
+            # Ensure all expected columns are present
+            for col in expected_cols:
+                if col not in input_data.columns:
+                    input_data[col] = 0
+            # Select columns in the expected order
+            input_data = input_data[expected_cols]
+        
         prediction = model.predict(input_data)[0]
         prediction_proba = model.predict_proba(input_data)[0]
         
