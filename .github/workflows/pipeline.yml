@@ -41,7 +41,18 @@ jobs:
       - name: Model Building and Training
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          # MLflow uses file-based tracking by default (./mlruns)
+          # To use remote MLflow server, set: MLFLOW_TRACKING_URI
+          # MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}  # Optional
         run: python model_building/train.py
+      # Optional: Upload MLflow artifacts
+      # - name: Upload MLflow Artifacts
+      #   uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: mlflow-runs
+      #     path: mlruns/
+      #     retention-days: 30
 
   deploy-hosting:
     runs-on: ubuntu-latest

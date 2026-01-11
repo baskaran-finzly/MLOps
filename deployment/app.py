@@ -9,8 +9,7 @@ import pandas as pd
 from huggingface_hub import hf_hub_download
 import joblib
 
-# TODO: Replace with your Hugging Face username
-HF_USERNAME = "BaskaranAIExpert"  # Change this!
+HF_USERNAME = "BaskaranAIExpert"
 
 # Page configuration
 st.set_page_config(
