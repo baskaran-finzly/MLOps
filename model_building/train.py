@@ -31,6 +31,9 @@ import mlflow
 import mlflow.sklearn
 from datetime import datetime
 import numpy as np
+from pyngrok import ngrok
+import subprocess
+import time
 
 # Configuration
 HF_USERNAME = "BaskaranAIExpert"
@@ -45,6 +48,24 @@ try:
     print("✓ Successfully initialized Hugging Face API client")
 except Exception as e:
     raise ConnectionError(f"Failed to initialize Hugging Face API: {str(e)}")
+
+# ngrok with auth token
+ngrok.set_auth_token("386kJSf5sGnd3Q97rrGB2jqJbHS_3EZZ43WbsA1bfskjTC12R")
+
+# Start MLflow UI on port 5000
+process = subprocess.Popen(["mlflow", "ui", "--port", "5000"])
+
+time.sleep(5)
+
+# Create public tunnel
+public_url = ngrok.connect(5000).public_url
+print("MLflow UI is available at:", public_url)
+
+# Set the tracking URL for MLflow
+mlflow.set_tracking_uri(public_url)
+
+# Set the name for the experiment
+mlflow.set_experiment("MLOps_experiment")    
 
 # Initialize MLflow
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
