@@ -1,68 +1,175 @@
+# ============================================================================
+# GITHUB ACTIONS WORKFLOW - MLOPS PIPELINE
+# ============================================================================
+# This workflow automates the complete MLOps pipeline:
+# 1. Data Registration: Uploads raw dataset to Hugging Face Hub
+# 2. Data Preparation: Preprocesses and splits data
+# 3. Model Training: Trains model with hyperparameter tuning
+# 4. Deployment: Deploys application to Hugging Face Spaces
+#
+# Author: MLOps Engineer
+# Date: 2024
+# ============================================================================
+
 name: Wellness Tourism MLOps Pipeline
 
+# ============================================================================
+# WORKFLOW TRIGGERS
+# ============================================================================
 on:
-  workflow_dispatch:  # Allows manual triggering
+  # Manual trigger: Allows running the workflow from GitHub Actions UI
+  workflow_dispatch:
+  
+  # Automatic trigger: Runs when code is pushed to main branch
   push:
     branches:
-      - main  # Automatically runs when code is pushed to main branch
+      - main
 
+# ============================================================================
+# JOBS DEFINITION
+# ============================================================================
 jobs:
 
+  # --------------------------------------------------------------------------
+  # JOB 1: DATA REGISTRATION
+  # --------------------------------------------------------------------------
+  # Purpose: Uploads raw dataset to Hugging Face Hub as a dataset repository
+  # Dependencies: None (runs first)
+  # --------------------------------------------------------------------------
   register-dataset:
     runs-on: ubuntu-latest
+    name: 📦 Register Dataset
+    
     steps:
+      # Checkout repository code
       - uses: actions/checkout@v3
+      
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      # Install project dependencies
       - name: Install Dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # Upload dataset to Hugging Face Hub
       - name: Upload Dataset to Hugging Face Hub
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python model_building/data_register.py
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Hugging Face authentication token
+        run: |
+          echo "Starting data registration..."
+          python model_building/data_register.py
 
+  # --------------------------------------------------------------------------
+  # JOB 2: DATA PREPARATION
+  # --------------------------------------------------------------------------
+  # Purpose: Cleans, preprocesses, and splits data into train/test sets
+  # Dependencies: register-dataset (must complete first)
+  # --------------------------------------------------------------------------
   data-prep:
-    needs: register-dataset
+    needs: register-dataset  # Wait for data registration to complete
     runs-on: ubuntu-latest
+    name: 🔧 Data Preparation
+    
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
       - name: Install Dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # Run data preparation script
       - name: Run Data Preparation
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python model_building/prep.py
+        run: |
+          echo "Starting data preparation..."
+          python model_building/prep.py
 
+  # --------------------------------------------------------------------------
+  # JOB 3: MODEL TRAINING
+  # --------------------------------------------------------------------------
+  # Purpose: Trains XGBoost model with hyperparameter tuning
+  # Dependencies: data-prep (requires processed data)
+  # --------------------------------------------------------------------------
   model-training:
-    needs: data-prep
+    needs: data-prep  # Wait for data preparation to complete
     runs-on: ubuntu-latest
+    name: 🤖 Model Training
+    
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
       - name: Install Dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # Train model with hyperparameter tuning
       - name: Model Building and Training
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           # MLflow uses file-based tracking by default (./mlruns)
-          # To use remote MLflow server, set: MLFLOW_TRACKING_URI
-          # MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}  # Optional
-        run: python model_building/train.py
-      # Optional: Upload MLflow artifacts
+          # To use remote MLflow server, uncomment and set:
+          # MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: |
+          echo "Starting model training..."
+          python model_building/train.py
+      
+      # Optional: Upload MLflow artifacts for analysis
+      # Uncomment to save MLflow runs as artifacts
       # - name: Upload MLflow Artifacts
       #   uses: actions/upload-artifact@v3
-      #   if: always()
+      #   if: always()  # Upload even if training fails
       #   with:
       #     name: mlflow-runs
       #     path: mlruns/
       #     retention-days: 30
 
+  # --------------------------------------------------------------------------
+  # JOB 4: DEPLOYMENT
+  # --------------------------------------------------------------------------
+  # Purpose: Deploys Streamlit application to Hugging Face Spaces
+  # Dependencies: model-training, data-prep, register-dataset
+  #               (ensures all previous steps completed)
+  # --------------------------------------------------------------------------
   deploy-hosting:
     runs-on: ubuntu-latest
-    needs: [model-training, data-prep, register-dataset]
+    needs: [model-training, data-prep, register-dataset]  # Wait for all jobs
+    name: 🚀 Deploy to Hugging Face
+    
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
       - name: Install Dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # Deploy application to Hugging Face Spaces
       - name: Push files to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python hosting/hosting.py
-
+        run: |
+          echo "Starting deployment..."
+          python hosting/hosting.py
