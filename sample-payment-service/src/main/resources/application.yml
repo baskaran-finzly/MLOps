@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: sample-payment-service
+
+payments:
+  supported-currencies:
+    - USD
+  ach:
+    cutoff-time: "17:00"
+  kafka:
+    # Set to true (and start a broker) to consume from payments.inbound.
+    enabled: false
+    topic: payments.inbound

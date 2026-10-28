@@ -1,0 +1,5 @@
+<!-- Keep test output short so hook messages to the agent stay readable. -->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <root level="WARN"/>
+</configuration>
