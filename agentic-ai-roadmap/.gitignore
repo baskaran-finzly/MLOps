@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+.chroma/
+mlruns/
+
+# files the lessons generate at runtime
+level2_agent_essentials/16_agent_memory/memory_store.json
+level2_agent_essentials/18_agent_evaluation/eval_results.json
+level3_advanced_agent_skills/22_autonomous_loops/tasks.json
+level3_advanced_agent_skills/22_autonomous_loops/reports/
+level3_advanced_agent_skills/22_autonomous_loops/STOP

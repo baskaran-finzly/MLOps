@@ -1,0 +1,24 @@
+# Core (needed by all lessons)
+anthropic>=2.8.0
+pydantic>=2.7
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+pytest>=8.0
+
+# Lesson 07 – vector database
+chromadb>=0.5
+
+# Lesson 20 – MCP toolkit
+mcp[cli]>=2.0
+
+# Lesson 24 – production API
+fastapi>=0.115
+uvicorn[standard]>=0.30
+
+# Optional (install when you reach the lesson):
+# sentence-transformers   # lesson 05 --dense
+# langchain-anthropic     # lessons 08, 12
+# langgraph               # lesson 12
+# crewai                  # lesson 12 exercise
+# mlflow                  # lesson 18 --mlflow
